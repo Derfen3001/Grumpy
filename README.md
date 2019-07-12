@@ -4,12 +4,6 @@ HiC data processing
 This script takes as imput HiC data in .cool format and a file containing the genomic regins of interest (for example TADs).
 As result the program calculates the interactions between and within the provided genomic regions.
 
-#### List of genomic regions
-
-This is a tsv without header containing chr, start, end, Type_1 and Type_2.
-Type_1 and Type_2 are mandatory colums that identify characteristics of the genomic regions (for exampem Type_1: Hihg Low H3K9me2 and Type_2: High Low H3k27me3).
-If not needed the insert a unique cluster each column.
-
 #### Usage
 
 grumpy.py [-h] -i INPUT [INPUT ...] -l LIST [-p PROCESSORS]
@@ -48,3 +42,9 @@ grumpy.py [-h] -i INPUT [INPUT ...] -l LIST [-p PROCESSORS]
   -trans, --incl_trans  Include in trans interactions, False by default
   
   --version             show program's version number and exit
+
+#### List of genomic regions
+
+This is a tsv without header containing chr, start, end, Type_1 and Type_2.
+Type_1 and Type_2 are mandatory colums that identify characteristics of the genomic regions (for exampem Type_1: Hihg Low H3K9me2 and Type_2: High Low H3k27me3).
+If not needed the insert a unique cluster each column.
