@@ -47,4 +47,4 @@ grumpy.py [-h] -i INPUT [INPUT ...] -l LIST [-p PROCESSORS]
 
 This is a tsv without header containing chr, start, end, Type_1 and Type_2.
 Type_1 and Type_2 are mandatory colums that identify characteristics of the genomic regions (for exampem Type_1: Hihg Low H3K9me2 and Type_2: High Low H3k27me3).
-If not needed the insert a unique cluster each column.
+If not needed insert a unique cluster each column.
