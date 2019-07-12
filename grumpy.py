@@ -4,7 +4,7 @@ from argparse import ArgumentParser
 #parsing input
 parser = ArgumentParser()
 parser.add_argument("-i", "--input", dest="Input",default=[], nargs='+', required=True, help='One or multiple cooler files')
-parser.add_argument("-l", "--list", dest="List", required=True, help='Sorted TAB list with no header and  Chr Start End RT_clusters Rif1_LaminB1_clusters colums' )
+parser.add_argument("-l", "--list", dest="List", required=True, help='Sorted TAB list with no header and  Chr Start End Type_1_clusters Type_2_clusters colums' )
 parser.add_argument("-p", "--processors",dest="processors", type=int, default=True,help='number of cores to use, if not specified it uses all the processors available')
 parser.add_argument("-o", "--output", dest="outputDir",default="Results", help='output directory')
 parser.add_argument("-f", "--feature_name", dest="element",default="Element", help='Name of the genomic feature')
@@ -63,7 +63,7 @@ def run (Data,List,Name,Element_Name,Trans,RANGE):
                         if all(sl1==sl2):
                             CisTransIntra='Intra'
                         
-                        c.append([Name,'{}-{}'.format(Element_Name,i1),'{}-{}'.format(Element_Name,i2),v,('{}to{}'.format(sl1['RT'],sl2['RT'])),('{}to{}'.format(sl1['Rif1_LaminB1'],sl2['Rif1_LaminB1'])),CisTransIntra])
+                        c.append([Name,'{}-{}'.format(Element_Name,i1),'{}-{}'.format(Element_Name,i2),v,('{}to{}'.format(sl1['Type_1'],sl2['Type_1'])),('{}to{}'.format(sl1['Type_2'],sl2['Type_2'])),CisTransIntra])
                         CisTransIntra=mem
         else:
             #load the matrix
@@ -81,10 +81,10 @@ def run (Data,List,Name,Element_Name,Trans,RANGE):
                     if all(sl1==sl2):
                         CisTransIntra='Intra'
                         
-                    c.append([Name,'{}-{}'.format(Element_Name,i1),'{}-{}'.format(Element_Name,i2),v,('{}to{}'.format(sl1['RT'],sl2['RT'])),('{}to{}'.format(sl1['Rif1_LaminB1'],sl2['Rif1_LaminB1'])),CisTransIntra])
+                    c.append([Name,'{}-{}'.format(Element_Name,i1),'{}-{}'.format(Element_Name,i2),v,('{}to{}'.format(sl1['Type_1'],sl2['Type_1'])),('{}to{}'.format(sl1['Type_2'],sl2['Type_2'])),CisTransIntra])
                     CisTransIntra=mem
 
-    return pd.DataFrame(c,columns=['Name','Anchored_Element','Interactiong_Element','Interactions_number','RT','Rif1_LaminB1','CisTransIntra'])
+    return pd.DataFrame(c,columns=['Name','Anchored_Element','Interactiong_Element','Interactions_number','Type_1','Type_2','CisTransIntra'])
 
 #checks directory and creates it if not existing
 def check_dir(path):
@@ -109,25 +109,25 @@ def boundaries_plot(Boundaries,outputDir,Lname):
         data=Boundaries,
         x='Name',
         y='Interactions_number',
-        col='RT',
+        col='Type_1',
         kind='box',
         palette = 'Set1',
         sharey = False
     )
     g.set_xticklabels(rotation=30)
-    g.savefig("{}Boundaries_Strengh_{}_split_RT_feature.pdf".format(outputDir,Lname))
+    g.savefig("{}Boundaries_Strengh_{}_split_Type_1_feature.pdf".format(outputDir,Lname))
     g=sns.factorplot(
         data=Boundaries,
         x='Name',
         y='Interactions_number',
-        col='Rif1_LaminB1',
+        col='Type_2',
         kind='box',
         size=5,
         palette = 'Set1',
         sharey = False
     )
     g.set_xticklabels(rotation=30)
-    g.savefig("{}Boundaries_Strengh_{}_split_Rif1_LaminB1_feature.pdf".format(outputDir,Lname))
+    g.savefig("{}Boundaries_Strengh_{}_split_Type_2_feature.pdf".format(outputDir,Lname))
 
 #plot function 
 def Feat_Cis_Trans_intra_plot(Feat_Cis_Trans_intra,outputDir,Lname):
@@ -188,7 +188,7 @@ def main(options):
     #create directory fore sults
     check_dir(outputDir)
             
-    List=pd.read_table(listin, sep="\t",names=("Chr","Start","Stop","RT","Rif1_LaminB1"))
+    List=pd.read_table(listin, sep="\t",names=("Chr","Start","Stop","Type_1","Type_2"))
     List=List.sort_values(["Chr","Start","Stop"])
     Lname=listin.split('/')[-1].split(".")[0]
     if options.coo==True:
@@ -233,15 +233,15 @@ def main(options):
         del Boundaries
         
     #calculate interactions divided for list features (reshape dataframe)
-    RT=Result[['Name','Anchored_Element','Interactions_number','RT','CisTransIntra']]
-    Rif1_LaminB1=Result[['Name','Anchored_Element','Interactions_number','Rif1_LaminB1','CisTransIntra']]
-    RT=RT.rename(columns = {'RT':'Type'})
-    Rif1_LaminB1=Rif1_LaminB1.rename(columns = {'Rif1_LaminB1':'Type'})
-    RT.loc[:,'Feature_genotype']='RT'
-    Rif1_LaminB1.loc[:,'Feature_genotype']='Rif1_LaminB1'
+    Type_1=Result[['Name','Anchored_Element','Interactions_number','Type_1','CisTransIntra']]
+    Type_2=Result[['Name','Anchored_Element','Interactions_number','Type_2','CisTransIntra']]
+    Type_1=Type_1.rename(columns = {'Type_1':'Type'})
+    Type_2=Type_2.rename(columns = {'Type_2':'Type'})
+    Type_1.loc[:,'Feature_genotype']='Type_1'
+    Type_2.loc[:,'Feature_genotype']='Type_2'
 
     # no need for the origina result, reuse variable 
-    Result=pd.concat([RT,Rif1_LaminB1])
+    Result=pd.concat([Type_1,Type_2])
     Result=Result.groupby(['Name','Anchored_Element','Type','CisTransIntra','Feature_genotype']).aggregate(sum).reset_index()
     
     #print the table devided by Feature and CisTransIntra
@@ -250,8 +250,8 @@ def main(options):
     #plot
     if options.plot:
         Feat_Cis_Trans_intra_plot(Result,outputDir,Lname)
-    #no need for the Rif1_LaminB1 feature later
-    del Rif1_LaminB1
+    #no need for the Type_2 feature later
+    del Type_2
     
     # delete cis trans intra information and sum the interactions devided by the list features
     del Result['CisTransIntra']
@@ -265,15 +265,15 @@ def main(options):
     del Result
     
     #caluclate Interactions on the base of the CisTransIntra
-    del RT['Type']
-    del RT['Feature_genotype']
-    RT=RT.groupby(['Name','Anchored_Element','CisTransIntra']).aggregate(sum).reset_index()
+    del Type_1['Type']
+    del Type_1['Feature_genotype']
+    Type_1=Type_1.groupby(['Name','Anchored_Element','CisTransIntra']).aggregate(sum).reset_index()
 
     # write file 
-    RT.to_csv('{}results_{}_Cis_Trans_intra.txt'.format(outputDir,Lname), sep='\t', index=False)
+    Type_1.to_csv('{}results_{}_Cis_Trans_intra.txt'.format(outputDir,Lname), sep='\t', index=False)
         #plot
     if options.plot:
-        Cis_Trans_intra_plot(RT,outputDir,Lname)
+        Cis_Trans_intra_plot(Type_1,outputDir,Lname)
 
 if __name__ == "__main__":
     main(options)
