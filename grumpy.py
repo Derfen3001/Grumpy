@@ -1,4 +1,4 @@
-from __future__ import division
+#!/usr/bin/env python3
 from argparse import ArgumentParser
 
 #parsing input
