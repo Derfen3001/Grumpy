@@ -4,6 +4,15 @@ HiC data processing
 This script takes as imput HiC data in .cool format and a file containing the genomic regins of interest (for example TADs).
 As result the program calculates the interactions between and within the provided genomic regions.
 
+#### Dependences
+
+python >= 3.6
+cooler >=  0.7
+matplotlib >= 2.1
+numpy >= 1.13
+pandas >= 0.20
+seaborn >= 0.8
+
 #### Usage
 
 grumpy.py [-h] -i INPUT [INPUT ...] -l LIST [-p PROCESSORS]

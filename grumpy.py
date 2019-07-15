@@ -1,4 +1,3 @@
-from __future__ import division
 from argparse import ArgumentParser
 
 #parsing input
