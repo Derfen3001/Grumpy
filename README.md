@@ -6,12 +6,12 @@ As result the program calculates the interactions between and within the provide
 
 #### Dependences
 
-python >= 3.6
-cooler >=  0.7
-matplotlib >= 2.1
-numpy >= 1.13
-pandas >= 0.20
-seaborn >= 0.8
+python >= 3.6\n
+cooler >=  0.7\n
+matplotlib >= 2.1\n
+numpy >= 1.13\n
+pandas >= 0.20\n
+seaborn >= 0.8\n
 
 #### Usage
 
