@@ -47,6 +47,8 @@ def run (Data,List,Name,Element_Name,Trans,RANGE):
                 if chr1==chr2:
                     #remouves the diagonal
                     matrix.setdiag(0)
+                    matrix.setdiag(0,1)
+                    matrix.setdiag(0,-1)
                     mem='Cis'
                     CisTransIntra='Cis'
                 else:
@@ -70,6 +72,8 @@ def run (Data,List,Name,Element_Name,Trans,RANGE):
             matrix = Data.matrix(sparse=True).fetch(chr1).tocsr()
             #remouves the diagonal
             matrix.setdiag(0)
+            matrix.setdiag(0,1)
+            matrix.setdiag(0,-1)
             mem='Cis'
             CisTransIntra='Cis'
             l1 = List[List["Chr"]==chr1]
