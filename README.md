@@ -8,7 +8,7 @@ As result the program calculates the interactions between and within the provide
 
 python >= 3.6
 
-cooler >=  0.7
+cooler >=  0.8.7
 
 matplotlib >= 2.1
 
@@ -32,6 +32,8 @@ grumpy.py [-h] -i INPUT [INPUT ...] -l LIST [-p PROCESSORS]
   
   -l LIST, --list LIST  Sorted TAB list with no header and Chr Start End
                         Type_1_clusters Type_2_clusters colums
+                        
+  -r RES, --res RES     mcool resolution
   
   -p PROCESSORS, --processors PROCESSORS
                         number of cores to use, if not specified it uses all

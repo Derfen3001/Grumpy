@@ -3,8 +3,9 @@ from argparse import ArgumentParser
 
 #parsing input
 parser = ArgumentParser()
-parser.add_argument("-i", "--input", dest="Input",default=[], nargs='+', required=True, help='One or multiple cooler files')
+parser.add_argument("-i", "--input", dest="Input",default=[], nargs='+', required=True, help='One or multiple cooler/mcooler files')
 parser.add_argument("-l", "--list", dest="List", required=True, help='Sorted TAB list with no header and  Chr Start End Type_1_clusters Type_2_clusters colums' )
+parser.add_argument("-r", "--res", dest="res",default="None", help='mcool resolution')
 parser.add_argument("-p", "--processors",dest="processors", type=int, default=True,help='number of cores to use, if not specified it uses all the processors available')
 parser.add_argument("-o", "--output", dest="outputDir",default="Results", help='output directory')
 parser.add_argument("-f", "--feature_name", dest="element",default="Element", help='Name of the genomic feature')
@@ -98,7 +99,7 @@ def check_dir(path):
 def boundaries_count(Result):
     Boundaries=Result[Result.apply(lambda x: (int(x['Anchored_Element'].split('-')[-1])-int(x['Interactiong_Element'].split('-')[-1]))== -1, axis=1)]
     return Boundaries
-#plot function 
+#plot function
 def boundaries_plot(Boundaries,outputDir,Lname):
     g=sns.factorplot(
         data=Boundaries,
@@ -133,7 +134,7 @@ def boundaries_plot(Boundaries,outputDir,Lname):
     g.set_xticklabels(rotation=30)
     g.savefig("{}Boundaries_Strengh_{}_split_Type_2_feature.pdf".format(outputDir,Lname))
 
-#plot function 
+#plot function
 def Feat_Cis_Trans_intra_plot(Feat_Cis_Trans_intra,outputDir,Lname):
     g=sns.factorplot(
         data=Feat_Cis_Trans_intra,
@@ -149,7 +150,7 @@ def Feat_Cis_Trans_intra_plot(Feat_Cis_Trans_intra,outputDir,Lname):
     g.set_xticklabels(rotation=30)
     g.savefig("{}results_{}_split_by_feature.pdf".format(outputDir,Lname))
 
-#plot function 
+#plot function
 def Feat_plot(Feat,outputDir,Lname):
     g=sns.factorplot(
         data=Feat,
@@ -164,7 +165,7 @@ def Feat_plot(Feat,outputDir,Lname):
     g.set_xticklabels(rotation=30)
     g.savefig("{}results_{}_split_by_feature_no_CIS_TRANS_INTRA.pdf".format(outputDir,Lname))
 
-#plot function 
+#plot function
 def Cis_Trans_intra_plot(Cis_Trans_intra,outputDir,Lname):
     g=sns.factorplot(
         data=Cis_Trans_intra,
@@ -180,7 +181,10 @@ def Cis_Trans_intra_plot(Cis_Trans_intra,outputDir,Lname):
     
 def main(options):
 
-    Input = [os.path.join(os.getcwd(), path) for path in options.Input]
+    if options.res == 'None':
+        Input = [os.path.join(os.getcwd(), path) for path in options.Input]
+    else:
+        Input = [os.path.join(os.getcwd(), path+'::resolutions/'+str(options.res)) for path in options.Input]
     listin = os.path.join(os.getcwd(),options.List)
     outputDir = '{}/'.format(os.path.join(os.getcwd(),options.outputDir))
 
@@ -201,7 +205,11 @@ def main(options):
         List2.to_csv('{}featuren_number_{}.txt'.format(outputDir,Lname), sep='\t', index=False)
 
     # Names of the samples based on cooler files
-    Name = [(i.split('/')[-1].split(".")[0].split("_")[0])for i in Input]
+    if options.res == 'None':
+        Name = [(i.split('/')[-1].split(".")[0].split("_")[0])for i in Input]
+    else:
+        Name = [(i.split('/')[-2].split(".")[0].split("_")[0])for i in Input]
+
     # Import cooler data
     DATA=[(cooler.Cooler(i))for i in Input]
             
@@ -214,7 +222,7 @@ def main(options):
         else:
             Chrs = len(DATA[0].chromnames)-2
         
-    he = [int(round(Chrs*i/processors)) for i in range(1, (processors+1))] 
+    he = [int(round(Chrs*i/processors)) for i in range(1, (processors+1))]
     hs = [int(round(Chrs*i/processors)) for i in range(0, processors)]
     p = Pool(processors)
     
@@ -244,7 +252,7 @@ def main(options):
     Type_1.loc[:,'Feature_genotype']='Type_1'
     Type_2.loc[:,'Feature_genotype']='Type_2'
 
-    # no need for the origina result, reuse variable 
+    # no need for the origina result, reuse variable
     Result=pd.concat([Type_1,Type_2])
     Result=Result.groupby(['Name','Anchored_Element','Type','CisTransIntra','Feature_genotype']).aggregate(sum).reset_index()
     
@@ -273,7 +281,7 @@ def main(options):
     del Type_1['Feature_genotype']
     Type_1=Type_1.groupby(['Name','Anchored_Element','CisTransIntra']).aggregate(sum).reset_index()
 
-    # write file 
+    # write file
     Type_1.to_csv('{}results_{}_Cis_Trans_intra.txt'.format(outputDir,Lname), sep='\t', index=False)
         #plot
     if options.plot:
