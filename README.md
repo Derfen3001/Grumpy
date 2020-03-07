@@ -27,7 +27,7 @@ grumpy.py [-h] -i INPUT [INPUT ...] -l LIST [-p PROCESSORS]
              
   -h, --help            show this help message and exit
   
-  -i INPUT [INPUT ...], --input INPUT [INPUT ...]\n
+  -i INPUT [INPUT ...], --input INPUT [INPUT ...]
                         One or multiple cooler files
   
   -l LIST, --list LIST  Sorted TAB list with no header and Chr Start End
