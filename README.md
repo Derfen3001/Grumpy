@@ -18,6 +18,9 @@ pandas >= 0.20
 
 seaborn >= 0.8
 
+argparse >= 1.3
+
+
 #### Usage
 
 grumpy.py [-h] -i INPUT [INPUT ...] -l LIST [-p PROCESSORS]
