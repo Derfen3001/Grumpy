@@ -27,13 +27,14 @@ grumpy.py [-h] -i INPUT [INPUT ...] -l LIST [-p PROCESSORS]
              
   -h, --help            show this help message and exit
   
-  -i INPUT [INPUT ...], --input INPUT [INPUT ...]\n
-                        One or multiple cooler files
+  -i INPUT [INPUT ...], --input INPUT [INPUT ...] One or multiple cooler/mcooler files
   
   -l LIST, --list LIST  Sorted TAB list with no header and Chr Start End
                         Type_1_clusters Type_2_clusters colums
                         
   -r RES, --res RES     mcool resolution
+  
+  -n NAMES [NAMES ...], --names NAMES [NAMES ...]
   
   -p PROCESSORS, --processors PROCESSORS
                         number of cores to use, if not specified it uses all

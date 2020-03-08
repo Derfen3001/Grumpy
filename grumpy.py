@@ -6,6 +6,7 @@ parser = ArgumentParser()
 parser.add_argument("-i", "--input", dest="Input",default=[], nargs='+', required=True, help='One or multiple cooler/mcooler files')
 parser.add_argument("-l", "--list", dest="List", required=True, help='Sorted TAB list with no header and  Chr Start End Type_1_clusters Type_2_clusters colums' )
 parser.add_argument("-r", "--res", dest="res",default="None", help='mcool resolution')
+parser.add_argument("-n", "--names", dest="names",default=[], nargs='+', help='List of names for each sample')
 parser.add_argument("-p", "--processors",dest="processors", type=int, default=True,help='number of cores to use, if not specified it uses all the processors available')
 parser.add_argument("-o", "--output", dest="outputDir",default="Results", help='output directory')
 parser.add_argument("-f", "--feature_name", dest="element",default="Element", help='Name of the genomic feature')
@@ -48,8 +49,6 @@ def run (Data,List,Name,Element_Name,Trans,RANGE):
                 if chr1==chr2:
                     #remouves the diagonal
                     matrix.setdiag(0)
-                    matrix.setdiag(0,1)
-                    matrix.setdiag(0,-1)
                     mem='Cis'
                     CisTransIntra='Cis'
                 else:
@@ -73,8 +72,6 @@ def run (Data,List,Name,Element_Name,Trans,RANGE):
             matrix = Data.matrix(sparse=True).fetch(chr1).tocsr()
             #remouves the diagonal
             matrix.setdiag(0)
-            matrix.setdiag(0,1)
-            matrix.setdiag(0,-1)
             mem='Cis'
             CisTransIntra='Cis'
             l1 = List[List["Chr"]==chr1]
@@ -205,10 +202,13 @@ def main(options):
         List2.to_csv('{}featuren_number_{}.txt'.format(outputDir,Lname), sep='\t', index=False)
 
     # Names of the samples based on cooler files
-    if options.res == 'None':
-        Name = [(i.split('/')[-1].split(".")[0].split("_")[0])for i in Input]
+    if options.names == []:
+        if options.res == 'None':
+           Name = [(i.split('/')[-1].split(".")[0])for i in Input]
+        else:
+           Name = [(i.split('/')[-2].split(".")[0])for i in Input]
     else:
-        Name = [(i.split('/')[-2].split(".")[0].split("_")[0])for i in Input]
+        Name = options.names
 
     # Import cooler data
     DATA=[(cooler.Cooler(i))for i in Input]
